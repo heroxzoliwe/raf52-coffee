@@ -9,7 +9,7 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-gray-200">Стать партнёром</h3>
   <a 
-    href="https://t.me/@dbdbbd3737" 
+    href="https://t.me/dbdbbd3737" 
     target="_blank" 
     rel="noopener noreferrer"
     className="text-gray-400 hover:text-white transition duration-300 block"
@@ -32,7 +32,7 @@ const Footer = () => {
   <h3 className="text-lg font-semibold mb-4 text-gray-200">Социальные сети</h3>
   <div className="space-y-2">
     <a 
-      href="https://t.me/@dbdbbd3737" 
+      href="https://t.me/dbdbbd3737" 
       target="_blank" 
       rel="noopener noreferrer"
       className="text-gray-400 hover:text-white transition duration-300 block"
