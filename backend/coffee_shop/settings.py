@@ -128,10 +128,12 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = 'api.User'
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://raf52-coffee-production.up.railway.app",
-]
-
 ALLOWED_HOSTS = [
     "raf52-coffee-production.up.railway.app",
+    "localhost",
+    "127.0.0.1",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://raf52-coffee-production.up.railway.app",
 ]
