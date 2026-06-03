@@ -1,6 +1,8 @@
 import re
-from rest_framework import serializers
+
 from django.contrib.auth.password_validation import validate_password
+from rest_framework import serializers
+
 from .models import User, Category, Product, Order, Store
 
 
@@ -60,6 +62,8 @@ def validate_address_value(value):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='first_name', read_only=True)
+
     class Meta:
         model = User
         fields = (
@@ -120,10 +124,26 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('password2')
-        return User.objects.create_user(**validated_data)
+
+        full_name = validated_data.pop('username')
+        email = validated_data.pop('email')
+        password = validated_data.pop('password')
+
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=full_name,
+            phone=validated_data.get('phone', ''),
+            address=validated_data.get('address', ''),
+        )
+
+        return user
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='first_name')
+
     class Meta:
         model = User
         fields = (
@@ -157,17 +177,13 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         return validate_address_value(value)
 
     def validate_default_payment(self, value):
-        allowed = ['card', 'sbp', 'cash']
-
-        if value not in allowed:
+        if value not in ['card', 'sbp', 'cash']:
             raise serializers.ValidationError('Недопустимый способ оплаты')
 
         return value
 
     def validate_default_delivery(self, value):
-        allowed = ['courier', 'pickup', 'post']
-
-        if value not in allowed:
+        if value not in ['courier', 'pickup', 'post']:
             raise serializers.ValidationError('Недопустимый способ доставки')
 
         return value
