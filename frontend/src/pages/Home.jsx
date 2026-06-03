@@ -353,7 +353,7 @@ const Home = () => {
                     whileHover={{ scale: 1.05 }}
                     className="mt-6 inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-6 py-3 border border-white/20"
                   >
-                    <span className="font-semibold">Посмотреть на карте</span>
+                    <span className="font-semibold">Список магазинов</span>
                     <motion.div 
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
