@@ -10,7 +10,7 @@ const Register = () => {
     phone: '',
     password: '',
     confirmPassword: '',
-    address: ''
+    address: '',
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -19,15 +19,76 @@ const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const inputClass =
+    'w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/20';
+
   const handleChange = (e) => {
+    setError('');
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const normalizePhone = (phone) => {
-    return phone.replace(/[^\d+]/g, '');
+    let value = phone.replace(/[^\d+]/g, '');
+
+    if (value.startsWith('8') && value.length === 11) {
+      value = `+7${value.slice(1)}`;
+    }
+
+    if (value.startsWith('7') && value.length === 11) {
+      value = `+${value}`;
+    }
+
+    return value;
+  };
+
+  const validateForm = () => {
+    const name = formData.name.trim();
+    const email = formData.email.trim().toLowerCase();
+    const phone = normalizePhone(formData.phone);
+    const address = formData.address.trim();
+
+    const nameRegex = /^[А-Яа-яA-Za-zЁё\s-]+$/;
+    const phoneRegex = /^\+7\d{10}$/;
+
+    if (name.length < 3) {
+      throw new Error('Введите нормальное имя');
+    }
+
+    if (!nameRegex.test(name)) {
+      throw new Error('Имя может содержать только буквы, пробел и дефис');
+    }
+
+    if (!email.includes('@') || email.length < 6) {
+      throw new Error('Введите нормальный email');
+    }
+
+    if (phone && !phoneRegex.test(phone)) {
+      throw new Error('Телефон должен быть в формате +7XXXXXXXXXX');
+    }
+
+    if (address && address.length < 5) {
+      throw new Error('Адрес слишком короткий');
+    }
+
+    if (formData.password.length < 8) {
+      throw new Error('Пароль должен содержать минимум 8 символов');
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      throw new Error('Пароли не совпадают');
+    }
+
+    return {
+      username: name,
+      email,
+      phone,
+      address,
+      password: formData.password,
+      password2: formData.confirmPassword,
+    };
   };
 
   const handleSubmit = async (e) => {
@@ -37,34 +98,9 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      if (!formData.name.trim()) {
-        throw new Error('Введите имя и фамилию');
-      }
+      const cleanData = validateForm();
 
-      if (!formData.email.trim()) {
-        throw new Error('Введите email');
-      }
-
-      if (!formData.password) {
-        throw new Error('Введите пароль');
-      }
-
-      if (formData.password !== formData.confirmPassword) {
-        throw new Error('Пароли не совпадают');
-      }
-
-      if (formData.password.length < 8) {
-        throw new Error('Пароль должен содержать минимум 8 символов');
-      }
-
-      await register({
-        username: formData.name.trim(),
-        email: formData.email.trim(),
-        phone: normalizePhone(formData.phone),
-        address: formData.address.trim(),
-        password: formData.password,
-        password2: formData.confirmPassword
-      });
+      await register(cleanData);
 
       navigate('/profile');
     } catch (err) {
@@ -75,30 +111,30 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-white pt-32 pb-20">
-      <div className="container-custom">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-white pt-24 sm:pt-32 pb-12 sm:pb-20">
+      <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-md mx-auto bg-white rounded-3xl shadow-2xl p-8"
+          className="max-w-md mx-auto bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-8"
         >
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-gray-900 mb-2">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2">
               Создать аккаунт
             </h1>
-            <p className="text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600">
               Присоединяйтесь к RAF-52 Coffee
             </p>
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4">
+            <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm mb-4">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Имя и фамилия *
@@ -108,8 +144,9 @@ const Register = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300"
+                className={inputClass}
                 placeholder="Иван Иванов"
+                maxLength="80"
                 required
               />
             </div>
@@ -123,7 +160,7 @@ const Register = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300"
+                className={inputClass}
                 placeholder="your@email.com"
                 required
               />
@@ -138,7 +175,7 @@ const Register = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300"
+                className={inputClass}
                 placeholder="+79000000000"
               />
             </div>
@@ -151,8 +188,9 @@ const Register = () => {
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 resize-none"
+                className={`${inputClass} resize-none`}
                 rows="2"
+                maxLength="300"
                 placeholder="Город, улица, дом, квартира"
               />
             </div>
@@ -166,7 +204,7 @@ const Register = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300"
+                className={inputClass}
                 placeholder="••••••••"
                 required
                 minLength="8"
@@ -185,7 +223,7 @@ const Register = () => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300"
+                className={inputClass}
                 placeholder="••••••••"
                 required
                 minLength="8"
@@ -202,7 +240,7 @@ const Register = () => {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600">
               Уже есть аккаунт?{' '}
               <Link to="/login" className="text-black font-semibold hover:underline">
                 Войти
