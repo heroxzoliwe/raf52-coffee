@@ -96,6 +96,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:5173',
+    "https://raf52-coffee.up.railway.app"
 ]
 
 FRONTEND_URL = os.environ.get('FRONTEND_URL')
