@@ -27,6 +27,7 @@ const imageMapByIndex = {
     'pitcher-pro-600ml',
     'pitcher-professional-650ml',
   ],
+
   tempers: [
     'temper-classic',
     'temper-professional',
@@ -39,10 +40,12 @@ const imageMapByIndex = {
     'temper-silicone',
     'temper-steel',
   ],
+
   scales: [
     'scales-coffee-precision',
     'scales-professional',
   ],
+
   accessories: [
     'basket-holder-58mm',
     'basket-double-58mm',
@@ -52,24 +55,19 @@ const imageMapByIndex = {
 
 const ProductCard = ({ product, index = 0, category }) => {
   const navigate = useNavigate();
+
   const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
 
-  const currentCategory =
-    category ||
-    product.category_slug ||
-    product.categorySlug ||
-    'pitchers';
-
   const fileName =
-    imageMapByIndex[currentCategory]?.[index] ||
+    imageMapByIndex[category]?.[index] ||
     product.slug ||
     product.id;
 
-  const imageSrc = `/images/categories/${currentCategory}/${fileName}.jpg`;
+  const imageSrc = `/images/categories/${category}/${fileName}.jpg`;
 
   const handleViewClick = () => {
-    navigate(`/product/${currentCategory}/${product.slug || product.id}`, {
+    navigate(`/product/${category}/${product.id}`, {
       state: {
         product,
         imageSrc,
@@ -88,7 +86,7 @@ const ProductCard = ({ product, index = 0, category }) => {
     addToCart(
       {
         ...product,
-        category_slug: currentCategory,
+        category_slug: category,
         imageSrc,
       },
       1
@@ -96,57 +94,69 @@ const ProductCard = ({ product, index = 0, category }) => {
   };
 
   return (
-    <motion.article
+    <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.03, 0.18) }}
+      transition={{
+        duration: 0.35,
+        delay: index * 0.03,
+      }}
       whileHover={{ y: -4 }}
-      className="bg-white rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-2xl overflow-hidden border border-gray-200 cursor-pointer flex flex-col h-full transition-shadow"
+      className="bg-white rounded-2xl sm:rounded-3xl shadow-lg overflow-hidden border border-gray-200 cursor-pointer flex flex-col h-full transition"
     >
-      <div onClick={handleViewClick} className="flex-grow">
-        <div className="h-52 sm:h-64 lg:h-72 bg-white flex items-center justify-center overflow-hidden">
+      <div
+        onClick={handleViewClick}
+        className="flex-grow cursor-pointer"
+      >
+        <div className="h-64 sm:h-72 lg:h-80 bg-white flex items-center justify-center overflow-hidden">
           <img
             src={imageSrc}
             alt={product.name}
             loading="lazy"
-            className="w-full h-full object-contain p-3 sm:p-4"
+            className="w-full h-full object-contain p-4 sm:p-5"
             onError={(e) => {
-              e.currentTarget.src = 'https://placehold.co/400x400?text=NO+IMAGE';
+              e.currentTarget.src =
+                'https://placehold.co/400x400?text=NO+IMAGE';
             }}
           />
         </div>
 
-        <div className="p-4 sm:p-6 lg:p-7">
-          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3 line-clamp-2">
+        <div className="p-5 sm:p-6">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 break-words">
             {product.name}
           </h3>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+          <div className="flex items-center justify-between gap-3 mb-4">
             <span className="text-2xl sm:text-3xl font-black text-black">
               ₽{product.price}
             </span>
 
-            <div className="flex items-center">
-              <span className="text-yellow-400 text-sm sm:text-base">★★★★★</span>
-              <span className="text-xs sm:text-sm text-gray-500 ml-1">4.8</span>
+            <div className="flex items-center shrink-0">
+              <span className="text-yellow-400 text-lg">
+                ★★★★★
+              </span>
+
+              <span className="text-sm text-gray-500 ml-1">
+                4.8
+              </span>
             </div>
           </div>
 
-          <p className="text-gray-600 text-sm line-clamp-2">
+          <p className="text-gray-600 text-sm sm:text-base line-clamp-2">
             {product.description}
           </p>
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 lg:px-7 pb-4 sm:pb-6 pt-3 border-t border-gray-100">
+      <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-2 border-t border-gray-100">
         <button
           onClick={handleBuyClick}
-          className="w-full bg-black text-white py-3 sm:py-4 rounded-xl font-semibold hover:bg-gray-800 transition text-sm sm:text-base"
+          className="w-full bg-black text-white py-3 sm:py-4 rounded-xl font-semibold hover:bg-gray-800 transition"
         >
           Купить сейчас
         </button>
       </div>
-    </motion.article>
+    </motion.div>
   );
 };
 
