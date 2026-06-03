@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  'https://raf52-coffee-production.up.railway.app/api';
 
 class ApiService {
   constructor() {
@@ -21,20 +23,34 @@ class ApiService {
     if (data.error) return data.error;
     if (data.detail) return data.detail;
 
+    const fieldLabels = {
+      username: 'Имя',
+      email: 'Email',
+      phone: 'Телефон',
+      address: 'Адрес',
+      password: 'Пароль',
+      password2: 'Подтверждение пароля',
+      default_payment: 'Способ оплаты',
+      default_delivery: 'Способ доставки',
+      non_field_errors: 'Ошибка',
+    };
+
     if (typeof data === 'string') return data;
 
     if (typeof data === 'object') {
       return Object.entries(data)
         .map(([field, value]) => {
+          const label = fieldLabels[field] || field;
+
           if (Array.isArray(value)) {
-            return `${field}: ${value.join(', ')}`;
+            return `${label}: ${value.join(', ')}`;
           }
 
-          if (typeof value === 'object') {
-            return `${field}: ${JSON.stringify(value)}`;
+          if (typeof value === 'object' && value !== null) {
+            return `${label}: ${this.getErrorMessage(value)}`;
           }
 
-          return `${field}: ${value}`;
+          return `${label}: ${value}`;
         })
         .join(' | ');
     }
@@ -45,7 +61,7 @@ class ApiService {
   async request(endpoint, options = {}) {
     const headers = {
       'Content-Type': 'application/json',
-      ...options.headers
+      ...options.headers,
     };
 
     if (this.token) {
@@ -54,7 +70,7 @@ class ApiService {
 
     const response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
-      headers
+      headers,
     });
 
     let data = null;
@@ -80,14 +96,14 @@ class ApiService {
   login(credentials) {
     return this.request('/auth/login/', {
       method: 'POST',
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(credentials),
     });
   }
 
   register(userData) {
     return this.request('/auth/register/', {
       method: 'POST',
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
   }
 
@@ -98,7 +114,7 @@ class ApiService {
   updateProfile(data) {
     return this.request('/auth/profile/', {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 
@@ -119,7 +135,7 @@ class ApiService {
   createOrder(orderData) {
     return this.request('/orders/create/', {
       method: 'POST',
-      body: JSON.stringify(orderData)
+      body: JSON.stringify(orderData),
     });
   }
 
