@@ -3,10 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-import Pitchers from './pages/Pitchers';
-import Tempers from './pages/Tempers';
-import Scales from './pages/Scales';
-import Accessories from './pages/Accessories';
+import CategoryPage from './pages/CategoryPage';
 import Buy from './pages/Buy';
 import Privacy from './pages/Privacy';
 import ProductPage from './pages/ProductPage';
@@ -35,10 +32,7 @@ const AppContent = () => {
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/pitchers" element={<Pitchers />} />
-          <Route path="/tempers" element={<Tempers />} />
-          <Route path="/scales" element={<Scales />} />
-          <Route path="/accessories" element={<Accessories />} />
+          <Route path="/:category" element={<CategoryPage />} />
           <Route path="/product/:category/:slug" element={<ProductPage />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
