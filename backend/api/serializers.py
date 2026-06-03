@@ -1,5 +1,62 @@
+import re
 from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
 from .models import User, Category, Product, Order, Store
+
+
+def clean_text(value):
+    return re.sub(r'\s+', ' ', value.strip())
+
+
+def validate_name(value):
+    value = clean_text(value)
+
+    if len(value) < 3:
+        raise serializers.ValidationError('Имя слишком короткое')
+
+    if len(value) > 80:
+        raise serializers.ValidationError('Имя слишком длинное')
+
+    if not re.match(r'^[А-Яа-яA-Za-zЁё\s\-]+$', value):
+        raise serializers.ValidationError('Имя может содержать только буквы, пробел и дефис')
+
+    return value
+
+
+def validate_phone_value(value):
+    if not value:
+        return ''
+
+    value = re.sub(r'[^\d+]', '', value)
+
+    if value.startswith('8') and len(value) == 11:
+        value = '+7' + value[1:]
+
+    if value.startswith('7') and len(value) == 11:
+        value = '+' + value
+
+    if not re.match(r'^\+7\d{10}$', value):
+        raise serializers.ValidationError('Телефон должен быть в формате +7XXXXXXXXXX')
+
+    return value
+
+
+def validate_address_value(value):
+    if not value:
+        return ''
+
+    value = clean_text(value)
+
+    if len(value) < 5:
+        raise serializers.ValidationError('Адрес слишком короткий')
+
+    if len(value) > 300:
+        raise serializers.ValidationError('Адрес слишком длинный')
+
+    if not re.match(r'^[А-Яа-яA-Za-zЁё0-9\s\-.,/№]+$', value):
+        raise serializers.ValidationError('Адрес содержит недопустимые символы')
+
+    return value
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,8 +75,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    password2 = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, min_length=8)
+    password2 = serializers.CharField(write_only=True, min_length=8)
 
     class Meta:
         model = User
@@ -32,16 +89,33 @@ class RegisterSerializer(serializers.ModelSerializer):
             'address',
         )
 
+    def validate_username(self, value):
+        return validate_name(value)
+
     def validate_email(self, value):
+        value = value.strip().lower()
+
         if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError('Email уже существует')
+            raise serializers.ValidationError('Этот email уже зарегистрирован')
+
+        return value
+
+    def validate_phone(self, value):
+        return validate_phone_value(value)
+
+    def validate_address(self, value):
+        return validate_address_value(value)
+
+    def validate_password(self, value):
+        validate_password(value)
         return value
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+        if attrs.get('password') != attrs.get('password2'):
             raise serializers.ValidationError({
-                'password': 'Пароли не совпадают'
+                'password2': 'Пароли не совпадают'
             })
+
         return attrs
 
     def create(self, validated_data):
@@ -63,6 +137,40 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             'created_at',
         )
         read_only_fields = ('id', 'created_at')
+
+    def validate_username(self, value):
+        return validate_name(value)
+
+    def validate_email(self, value):
+        value = value.strip().lower()
+        user = self.instance
+
+        if User.objects.exclude(id=user.id).filter(email=value).exists():
+            raise serializers.ValidationError('Этот email уже занят')
+
+        return value
+
+    def validate_phone(self, value):
+        return validate_phone_value(value)
+
+    def validate_address(self, value):
+        return validate_address_value(value)
+
+    def validate_default_payment(self, value):
+        allowed = ['card', 'sbp', 'cash']
+
+        if value not in allowed:
+            raise serializers.ValidationError('Недопустимый способ оплаты')
+
+        return value
+
+    def validate_default_delivery(self, value):
+        allowed = ['courier', 'pickup', 'post']
+
+        if value not in allowed:
+            raise serializers.ValidationError('Недопустимый способ доставки')
+
+        return value
 
 
 class CategorySerializer(serializers.ModelSerializer):
