@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 
 const Buy = () => {
   const stores = [
@@ -17,124 +16,193 @@ const Buy = () => {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.45,
+      },
+    },
   };
 
-  const cardHoverVariants = {
-    hover: { y: -8, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }
+  const handleCall = (phone) => {
+    window.location.href = `tel:${phone.replace(/[^\d+]/g, '')}`;
   };
 
-  const buttonVariants = {
-    hover: { scale: 1.05 },
-    tap: { scale: 0.95 }
-  };
+  const handleOpenMap = (address) => {
+    const encodedAddress = encodeURIComponent(address);
 
-  const handleCall = (phone) => { alert(`Звоним по номеру: ${phone}`); };
-  const handleOpenMap = (address) => { alert(`Открываем карту с адресом: ${address}`); };
+    window.open(
+      `https://yandex.ru/maps/?text=${encodedAddress}`,
+      '_blank'
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-32 pb-20">
-      <div className="container-custom px-4">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-28 sm:pt-32 pb-16 sm:pb-20">
+      <div className="container mx-auto px-4">
+
+        {/* HEADER */}
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.45 }}
+          className="text-center mb-12 sm:mb-16"
         >
-          <h1 className="text-5xl font-black text-gray-900 mb-6">Где купить</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-            Наши официальные магазины-партнеры по всей России. Выберите удобный способ покупки.
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+            Где купить
+          </h1>
+
+          <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto mb-8 leading-relaxed">
+            Наши официальные магазины-партнеры по всей России.
+            Выберите удобный способ покупки.
           </p>
-          
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
+
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8">
             {[
-              { icon: 'free-icon-city-map-2803054.png', text: 'Доступно в 9 городах' },
-              { icon: 'free-icon-shield-1489591.png', text: 'Официальная гарантия' },
-              { icon: 'free-icon-shipping-and-delivery-6830976.png', text: 'Бесплатная доставка' }
+              {
+                icon: 'free-icon-city-map-2803054.png',
+                text: 'Доступно в 9 городах',
+              },
+              {
+                icon: 'free-icon-shield-1489591.png',
+                text: 'Официальная гарантия',
+              },
+              {
+                icon: 'free-icon-shipping-and-delivery-6830976.png',
+                text: 'Бесплатная доставка',
+              },
             ].map((badge, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
-                initial={{ opacity: 0, scale: 0 }}
+                initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.2 }}
-                className="flex items-center space-x-2 bg-white px-4 py-2 rounded-xl shadow-md"
+                transition={{ delay: idx * 0.12 }}
+                className="flex items-center gap-2 bg-white px-4 py-3 rounded-xl shadow-md border border-gray-100"
               >
-                <img src={`/images/icons/${badge.icon}`} alt={badge.text} className="w-4 h-4" />
-                <span className="text-sm font-medium text-gray-700">{badge.text}</span>
+                <img
+                  src={`/images/icons/${badge.icon}`}
+                  alt={badge.text}
+                  className="w-4 h-4"
+                />
+
+                <span className="text-xs sm:text-sm font-medium text-gray-700">
+                  {badge.text}
+                </span>
               </motion.div>
             ))}
           </div>
-          
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: 96 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="h-1 bg-gradient-to-r from-black to-gray-800 mx-auto mt-8 rounded-full"
-          />
+
+          <div className="h-1 bg-gradient-to-r from-black to-gray-800 mx-auto rounded-full w-24" />
         </motion.div>
+
+        {/* STORES */}
 
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20"
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8"
         >
           {stores.map((store) => (
             <motion.div
               key={store.id}
               variants={itemVariants}
-              whileHover="hover"
-              className="bg-white rounded-2xl p-6 shadow-lg transition-all duration-300 border border-gray-100"
+              whileHover={{ y: -6 }}
+              className="bg-white rounded-2xl p-5 sm:p-6 shadow-lg border border-gray-100 transition-all duration-300"
             >
-              <div className="flex items-center space-x-4 mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-gray-900 to-black rounded-xl flex items-center justify-center">
-                  <img src="/images/icons/free-icon-store-3871072.png" alt="Магазин" className="w-8 h-8 brightness-0 invert" />
+
+              {/* TOP */}
+
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-16 h-16 bg-gradient-to-br from-gray-900 to-black rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <img
+                    src="/images/icons/free-icon-store-3871072.png"
+                    alt="Магазин"
+                    className="w-8 h-8 brightness-0 invert"
+                  />
                 </div>
-                <div>
-                  <h3 className="font-bold text-gray-800 text-lg">{store.name}</h3>
-                  <div className="flex items-center mt-1">
-                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Открыто до 21:00</span>
+
+                <div className="min-w-0">
+                  <h3 className="font-black text-gray-900 text-lg sm:text-xl leading-tight">
+                    {store.name}
+                  </h3>
+
+                  <div className="mt-2 inline-flex items-center rounded-full bg-green-100 text-green-700 px-3 py-1 text-xs font-semibold">
+                    Открыто до 21:00
                   </div>
                 </div>
               </div>
-              
-              <div className="space-y-3 mb-6">
-                <div className="flex items-start space-x-2">
-                  <img src="/images/icons/free-icon-city-map-2803054.png" alt="Адрес" className="w-5 h-5 mt-0.5" />
-                  <p className="text-gray-600 text-sm">{store.address}</p>
+
+              {/* INFO */}
+
+              <div className="space-y-4 mb-6">
+
+                <div className="flex items-start gap-3">
+                  <img
+                    src="/images/icons/free-icon-city-map-2803054.png"
+                    alt="Адрес"
+                    className="w-5 h-5 mt-0.5"
+                  />
+
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+                    {store.address}
+                  </p>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <img src="/images/icons/free-icon-phone-call-5585562.png" alt="Телефон" className="w-5 h-5" />
-                  <p className="text-gray-800 font-medium">{store.phone}</p>
+
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/images/icons/free-icon-phone-call-5585562.png"
+                    alt="Телефон"
+                    className="w-5 h-5"
+                  />
+
+                  <p className="text-gray-900 font-semibold text-sm sm:text-base">
+                    {store.phone}
+                  </p>
                 </div>
               </div>
-              
-              <div className="flex space-x-2">
-                <motion.button 
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
+
+              {/* BUTTONS */}
+
+              <div className="flex flex-col sm:flex-row gap-3">
+
+                <button
                   onClick={() => handleCall(store.phone)}
-                  className="flex-1 bg-black text-white px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors duration-300 flex items-center justify-center space-x-2"
+                  className="flex-1 bg-black text-white px-4 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-2"
                 >
-                  <img src="/images/icons/free-icon-phone-call-5585562.png" alt="Позвонить" className="w-4 h-4 brightness-0 invert" />
+                  <img
+                    src="/images/icons/free-icon-phone-call-5585562.png"
+                    alt="Позвонить"
+                    className="w-4 h-4 brightness-0 invert"
+                  />
+
                   <span>Позвонить</span>
-                </motion.button>
-                <motion.button 
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
+                </button>
+
+                <button
                   onClick={() => handleOpenMap(store.address)}
-                  className="flex-1 bg-gray-100 text-gray-800 px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors duration-300 flex items-center justify-center space-x-2"
+                  className="flex-1 bg-gray-100 text-gray-800 px-4 py-3 rounded-xl text-sm font-semibold hover:bg-gray-200 transition flex items-center justify-center gap-2"
                 >
-                  <img src="/images/icons/free-icon-city-map-2803054.png" alt="Карта" className="w-4 h-4" />
+                  <img
+                    src="/images/icons/free-icon-city-map-2803054.png"
+                    alt="Карта"
+                    className="w-4 h-4"
+                  />
+
                   <span>На карте</span>
-                </motion.button>
+                </button>
               </div>
             </motion.div>
           ))}
