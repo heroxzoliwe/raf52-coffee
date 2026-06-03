@@ -47,6 +47,14 @@ const Footer = () => {
     >
       ВКонтакте
     </a>
+     <a 
+      href="https://t.me/quipassion" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="text-gray-400 hover:text-white transition duration-300 block"
+    >
+      НАШ МЕНЕДЖЕР
+    </a>
     </div>
   </div>
         </div>
