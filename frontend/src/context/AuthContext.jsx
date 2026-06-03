@@ -5,6 +5,12 @@ const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
+const clearAuthStorage = () => {
+  api.setToken(null);
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,26 +19,26 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('access_token');
 
-    if (token) {
-      api.setToken(token);
-
-      api.getProfile()
-        .then((data) => {
-          setUser(data);
-          setIsAuthenticated(true);
-        })
-        .catch(() => {
-          api.setToken(null);
-          localStorage.removeItem('refresh_token');
-          setUser(null);
-          setIsAuthenticated(false);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
+    if (!token) {
       setLoading(false);
+      return;
     }
+
+    api.setToken(token);
+
+    api.getProfile()
+      .then((data) => {
+        setUser(data);
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        clearAuthStorage();
+        setUser(null);
+        setIsAuthenticated(false);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   const login = async (email, password) => {
@@ -60,10 +66,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    api.setToken(null);
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-
+    clearAuthStorage();
     setUser(null);
     setIsAuthenticated(false);
   };
