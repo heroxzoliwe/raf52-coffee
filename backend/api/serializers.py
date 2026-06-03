@@ -78,20 +78,13 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=8)
     password2 = serializers.CharField(write_only=True, min_length=8)
-
-    class Meta:
-        model = User
-        fields = (
-            'username',
-            'email',
-            'password',
-            'password2',
-            'phone',
-            'address',
-        )
+    phone = serializers.CharField(required=False, allow_blank=True)
+    address = serializers.CharField(required=False, allow_blank=True)
 
     def validate_username(self, value):
         return validate_name(value)
@@ -115,7 +108,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        if attrs.get('password') != attrs.get('password2'):
+        if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({
                 'password2': 'Пароли не совпадают'
             })
