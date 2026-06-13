@@ -148,64 +148,68 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-            {categories.map((category, index) => (
-              <motion.div
-                key={category.path}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: index * 0.05 }}
-                className={
-                  categories.length % 2 === 1 && index === categories.length - 1
-                    ? 'lg:col-span-2'
-                    : ''
-                }
-              >
-                <Link
-                  to={category.path}
-                  className="group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 block border border-gray-200"
+            {categories.map((category, index) => {
+              const isCoffeeMachines = category.path === '/coffee-machines';
+
+              return (
+                <motion.div
+                  key={category.path}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.35, delay: index * 0.05 }}
+                  className={
+                    categories.length % 2 === 1 && index === categories.length - 1
+                      ? 'lg:col-span-2'
+                      : ''
+                  }
                 >
-                  <div className="relative h-72 sm:h-80 lg:h-96 overflow-hidden bg-white">
-                    <img
-                      src={`/images/${category.image}`}
-                      alt={category.name}
-                      loading="lazy"
-                      className={`w-full h-full group-hover:scale-105 transition duration-500 ${
-                        category.path === '/coffee-machines'
-                          ? 'object-cover'
-                          : 'object-contain bg-white p-5 sm:p-8'
-                      }`}
-                      onError={(e) => {
-                        e.currentTarget.src = '/images/categories/placeholder.jpg';
-                      }}
-                    />
+                  <Link
+                    to={category.path}
+                    className="group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 block border border-gray-200"
+                  >
+                    <div className="relative h-72 sm:h-80 lg:h-96 overflow-hidden bg-white">
+                      <img
+                        src={`/images/${category.image}`}
+                        alt={category.name}
+                        loading="lazy"
+                        className={`w-full h-full transition duration-500 ${
+                          isCoffeeMachines
+                            ? 'object-contain bg-white p-8 sm:p-12 lg:p-16 group-hover:scale-[1.02]'
+                            : 'object-contain bg-white p-5 sm:p-8 group-hover:scale-105'
+                        }`}
+                        onError={(e) => {
+                          e.currentTarget.src = '/images/categories/placeholder.jpg';
+                        }}
+                      />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 text-white">
-                      <div className="flex items-center justify-between gap-3 mb-4">
-                        <h3 className="text-2xl sm:text-3xl font-black">
-                          {category.name}
-                        </h3>
+                      <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 text-white">
+                        <div className="flex items-center justify-between gap-3 mb-4">
+                          <h3 className="text-2xl sm:text-3xl font-black">
+                            {category.name}
+                          </h3>
 
-                        <span className="bg-white/20 backdrop-blur-md rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold whitespace-nowrap">
-                          {category.count}
-                        </span>
-                      </div>
+                          <span className="bg-white/20 backdrop-blur-md rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold whitespace-nowrap">
+                            {category.count}
+                          </span>
+                        </div>
 
-                      <p className="text-gray-200 mb-4 text-sm sm:text-base">
-                        {category.description}
-                      </p>
+                        <p className="text-gray-200 mb-4 text-sm sm:text-base">
+                          {category.description}
+                        </p>
 
-                      <div className="inline-flex items-center gap-2 text-sm text-gray-200 font-semibold">
-                        <span>Подробнее</span>
-                        <span>→</span>
+                        <div className="inline-flex items-center gap-2 text-sm text-gray-200 font-semibold">
+                          <span>Подробнее</span>
+                          <span>→</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
