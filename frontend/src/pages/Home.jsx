@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const heroSlides = [
-  'categories/slider/coffee-1.jpg',
-  'categories/slider/coffee-2.jpg',
-  'categories/slider/coffee-3.jpg',
-  'categories/slider/coffee-machine-1.jpg',
-  'categories/slider/barista-1.png',
-  'categories/slider/cafe-1.jpg',
+  'categories/coffee-machines/coffee-machines-card.jpg',
+  'categories/coffee-machines/coffee-machine-classic-pro.jpg',
+  'categories/coffee-machines/coffee-machine-duo-barista.jpg',
+  'categories/coffee-machines/coffee-machine-compact-one.jpg',
+  'categories/pitchers/pitcher-professional-350ml.jpg',
+  'categories/tempers/temper-classic.jpg',
+  'categories/scales/scales-coffee-precision.jpg',
+  'categories/accessories/basket-holder-58mm.jpg',
 ];
 
 const Home = () => {
@@ -44,7 +46,7 @@ const Home = () => {
     {
       name: 'Кофе машины',
       path: '/coffee-machines',
-      image: 'categories/coffee-machines/coffee-machine-classic-pro.jpg',
+      image: 'categories/coffee-machines/coffee-machines-card.jpg',
       description: 'Профессиональные кофемашины для кофейни',
       count: '6 моделей',
     },
@@ -89,9 +91,10 @@ const Home = () => {
             ))}
           </div>
         </div>
-<div className="absolute inset-0 bg-white/45 backdrop-blur-[0.5px] z-[1]" />
-<div className="absolute inset-0 animated-gradient opacity-40 z-[2]" />
-<div className="absolute inset-0 bg-dot-pattern opacity-70 z-[3]" />
+
+        <div className="absolute inset-0 bg-white/45 backdrop-blur-[0.5px] z-[1]" />
+        <div className="absolute inset-0 animated-gradient opacity-40 z-[2]" />
+        <div className="absolute inset-0 bg-dot-pattern opacity-70 z-[3]" />
 
         <div className="container mx-auto px-4 relative z-10 text-center">
           <div className="max-w-4xl mx-auto">
@@ -167,7 +170,11 @@ const Home = () => {
                       src={`/images/${category.image}`}
                       alt={category.name}
                       loading="lazy"
-                      className="w-full h-full object-contain bg-white p-5 sm:p-8 group-hover:scale-105 transition duration-500"
+                      className={`w-full h-full group-hover:scale-105 transition duration-500 ${
+                        category.path === '/coffee-machines'
+                          ? 'object-cover'
+                          : 'object-contain bg-white p-5 sm:p-8'
+                      }`}
                       onError={(e) => {
                         e.currentTarget.src = '/images/categories/placeholder.jpg';
                       }}
