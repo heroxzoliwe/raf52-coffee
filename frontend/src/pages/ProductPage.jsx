@@ -70,16 +70,12 @@ const getImageSrc = (item) => {
     return `${API_BASE_URL}/${item.image}`;
   }
 
-  if (item.image?.startsWith('products/')) {
-    return `${API_BASE_URL}/media/${item.image}`;
-  }
-
   if (item.image?.startsWith('categories/')) {
     return `/images/${item.image}`;
   }
 
-  if (item.image) {
-    return `${API_BASE_URL}/media/products/${item.image}`;
+  if (item.image?.startsWith('products/')) {
+    return `${API_BASE_URL}/media/${item.image}`;
   }
 
   return `/images/categories/${category}/${item.slug || item.id}.jpg`;
@@ -264,10 +260,18 @@ const getImageSrc = (item) => {
               alt={`${product.name} — профессиональное кофейное оборудование RAF-52 Coffee`}
               loading="lazy"
               className="w-full h-full object-contain max-h-[500px]"
-              onError={(e) => {
-                e.currentTarget.src =
-                  'https://placehold.co/600x400?text=NO+IMAGE';
-              }}
+onError={(e) => {
+  const fallbackSrc = `/images/categories/${category}/${product.slug || product.id}.jpg`;
+
+  if (!e.currentTarget.dataset.usedFallback) {
+    e.currentTarget.dataset.usedFallback = 'true';
+    e.currentTarget.src = fallbackSrc;
+    return;
+  }
+
+  e.currentTarget.src =
+    'https://placehold.co/600x400?text=NO+IMAGE';
+}}
             />
           </div>
 

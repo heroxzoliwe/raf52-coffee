@@ -67,11 +67,19 @@ const API_BASE_URL = (
   'http://127.0.0.1:8000/api'
 ).replace('/api', '');
 
-const getProductImage = (product, category, index) => {
+const getLocalImageBySlug = (product, category, index) => {
   const fileName =
-    imageMapByIndex[category]?.[index] ||
     product.slug ||
+    imageMapByIndex[category]?.[index] ||
     product.id;
+
+  return `/images/categories/${category}/${fileName}.jpg`;
+};
+
+const getProductImage = (product, category, index) => {
+  if (!product) {
+    return '/images/categories/placeholder.jpg';
+  }
 
   if (product.image?.startsWith('http')) {
     return product.image;
@@ -85,19 +93,15 @@ const getProductImage = (product, category, index) => {
     return `${API_BASE_URL}/${product.image}`;
   }
 
-  if (product.image?.startsWith('products/')) {
-    return `${API_BASE_URL}/media/${product.image}`;
-  }
-
   if (product.image?.startsWith('categories/')) {
     return `/images/${product.image}`;
   }
 
-  if (product.image) {
-    return `${API_BASE_URL}/media/products/${product.image}`;
+  if (product.image?.startsWith('products/')) {
+    return `${API_BASE_URL}/media/${product.image}`;
   }
 
-  return `/images/categories/${category}/${fileName}.jpg`;
+  return getLocalImageBySlug(product, category, index);
 };
 
 const ProductCard = ({ product, index = 0, category }) => {
@@ -107,12 +111,14 @@ const ProductCard = ({ product, index = 0, category }) => {
   const { addToCart } = useCart();
 
   const imageSrc = getProductImage(product, category, index);
+  const fallbackImageSrc = getLocalImageBySlug(product, category, index);
 
   const handleViewClick = () => {
     navigate(`/product/${category}/${product.id}`, {
       state: {
         product,
         imageSrc,
+        fallbackImageSrc,
       },
     });
   };
@@ -133,6 +139,16 @@ const ProductCard = ({ product, index = 0, category }) => {
       },
       1
     );
+  };
+
+  const handleImageError = (e) => {
+    if (!e.currentTarget.dataset.usedFallback) {
+      e.currentTarget.dataset.usedFallback = 'true';
+      e.currentTarget.src = fallbackImageSrc;
+      return;
+    }
+
+    e.currentTarget.src = '/images/categories/placeholder.jpg';
   };
 
   return (
@@ -156,10 +172,7 @@ const ProductCard = ({ product, index = 0, category }) => {
             alt={`${product.name} — профессиональное кофейное оборудование RAF-52 Coffee`}
             loading="lazy"
             className="w-full h-full object-contain p-4 sm:p-5"
-            onError={(e) => {
-              e.currentTarget.src =
-                '/images/categories/placeholder.jpg';
-            }}
+            onError={handleImageError}
           />
         </div>
 
