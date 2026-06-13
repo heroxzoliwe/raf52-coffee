@@ -17,11 +17,9 @@ class ApiService {
     }
   }
 
-  getErrorMessage(data) {
-    if (!data) return 'Ошибка запроса';
-
-    if (data.error) return data.error;
-    if (data.detail) return data.detail;
+  getErrorMessage(data, status, rawText) {
+    if (data?.error) return data.error;
+    if (data?.detail) return data.detail;
 
     const fieldLabels = {
       username: 'Имя',
@@ -35,12 +33,15 @@ class ApiService {
       preferred_contact: 'Способ связи',
       subject: 'Тема',
       message: 'Сообщение',
+      name: 'Имя',
       non_field_errors: 'Ошибка',
     };
 
-    if (typeof data === 'string') return data;
+    if (typeof data === 'string') {
+      return data;
+    }
 
-    if (typeof data === 'object') {
+    if (data && typeof data === 'object') {
       return Object.entries(data)
         .map(([field, value]) => {
           const label = fieldLabels[field] || field;
@@ -50,7 +51,7 @@ class ApiService {
           }
 
           if (typeof value === 'object' && value !== null) {
-            return `${label}: ${this.getErrorMessage(value)}`;
+            return `${label}: ${this.getErrorMessage(value, status, rawText)}`;
           }
 
           return `${label}: ${value}`;
@@ -58,7 +59,18 @@ class ApiService {
         .join(' | ');
     }
 
-    return 'Ошибка запроса';
+    if (rawText) {
+      const cleanText = rawText
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (cleanText) {
+        return `HTTP ${status}: ${cleanText.slice(0, 300)}`;
+      }
+    }
+
+    return `Ошибка запроса. HTTP статус: ${status}`;
   }
 
   async request(endpoint, options = {}) {
@@ -71,15 +83,19 @@ class ApiService {
       headers.Authorization = `Bearer ${this.token}`;
     }
 
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    const url = `${API_URL}${endpoint}`;
+
+    const response = await fetch(url, {
       ...options,
       headers,
     });
 
+    const rawText = await response.text();
+
     let data = null;
 
     try {
-      data = await response.json();
+      data = rawText ? JSON.parse(rawText) : null;
     } catch {
       data = null;
     }
@@ -90,7 +106,16 @@ class ApiService {
     }
 
     if (!response.ok) {
-      throw new Error(this.getErrorMessage(data));
+      console.error('API ERROR:', {
+        url,
+        status: response.status,
+        data,
+        rawText,
+      });
+
+      throw new Error(
+        this.getErrorMessage(data, response.status, rawText)
+      );
     }
 
     return data;
