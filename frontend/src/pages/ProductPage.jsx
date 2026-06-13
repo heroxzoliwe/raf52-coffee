@@ -55,21 +55,35 @@ const ProductPage = () => {
       });
     };
 
-    const getImageSrc = (item) => {
-      if (!item) return '';
+const getImageSrc = (item) => {
+  if (!item) return '';
 
-      if (item.image?.startsWith('http')) {
-        return item.image;
-      }
+  if (item.image?.startsWith('http')) {
+    return item.image;
+  }
 
-      if (item.image?.startsWith('/media')) {
-        return `${API_BASE_URL}${item.image}`;
-      }
+  if (item.image?.startsWith('/media')) {
+    return `${API_BASE_URL}${item.image}`;
+  }
 
-      return item.image
-        ? `/images/${item.image}`
-        : `/images/categories/${category}/${item.slug || item.id}.jpg`;
-    };
+  if (item.image?.startsWith('media/')) {
+    return `${API_BASE_URL}/${item.image}`;
+  }
+
+  if (item.image?.startsWith('products/')) {
+    return `${API_BASE_URL}/media/${item.image}`;
+  }
+
+  if (item.image?.startsWith('categories/')) {
+    return `/images/${item.image}`;
+  }
+
+  if (item.image) {
+    return `${API_BASE_URL}/media/products/${item.image}`;
+  }
+
+  return `/images/categories/${category}/${item.slug || item.id}.jpg`;
+};
 
     const loadProduct = async () => {
       try {

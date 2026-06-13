@@ -62,29 +62,51 @@ const imageMapByIndex = {
   ],
 };
 
+const API_BASE_URL = (
+  process.env.REACT_APP_API_URL ||
+  'http://127.0.0.1:8000/api'
+).replace('/api', '');
+
+const getProductImage = (product, category, index) => {
+  const fileName =
+    imageMapByIndex[category]?.[index] ||
+    product.slug ||
+    product.id;
+
+  if (product.image?.startsWith('http')) {
+    return product.image;
+  }
+
+  if (product.image?.startsWith('/media')) {
+    return `${API_BASE_URL}${product.image}`;
+  }
+
+  if (product.image?.startsWith('media/')) {
+    return `${API_BASE_URL}/${product.image}`;
+  }
+
+  if (product.image?.startsWith('products/')) {
+    return `${API_BASE_URL}/media/${product.image}`;
+  }
+
+  if (product.image?.startsWith('categories/')) {
+    return `/images/${product.image}`;
+  }
+
+  if (product.image) {
+    return `${API_BASE_URL}/media/products/${product.image}`;
+  }
+
+  return `/images/categories/${category}/${fileName}.jpg`;
+};
+
 const ProductCard = ({ product, index = 0, category }) => {
   const navigate = useNavigate();
 
   const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
 
-  const fileName =
-    imageMapByIndex[category]?.[index] ||
-    product.slug ||
-    product.id;
-
-  const API_BASE_URL = (
-    process.env.REACT_APP_API_URL ||
-    'http://127.0.0.1:8000/api'
-  ).replace('/api', '');
-
-  const imageSrc = product.image?.startsWith('http')
-    ? product.image
-    : product.image?.startsWith('/media')
-      ? `${API_BASE_URL}${product.image}`
-      : product.image
-        ? `/images/${product.image}`
-        : `/images/categories/${category}/${fileName}.jpg`;
+  const imageSrc = getProductImage(product, category, index);
 
   const handleViewClick = () => {
     navigate(`/product/${category}/${product.id}`, {
