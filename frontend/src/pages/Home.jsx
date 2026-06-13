@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const heroSlides = [
-  'categories/coffee-machines/coffee-machines-card.jpg',
-  'categories/coffee-machines/coffee-machine-classic-pro.jpg',
-  'categories/coffee-machines/coffee-machine-duo-barista.jpg',
-  'categories/coffee-machines/coffee-machine-compact-one.jpg',
-  'categories/pitchers/pitcher-professional-350ml.jpg',
-  'categories/tempers/temper-classic.jpg',
-  'categories/scales/scales-coffee-precision.jpg',
-  'categories/accessories/basket-holder-58mm.jpg',
+  'categories/slider/coffee-1.jpg',
+  'categories/slider/coffee-2.jpg',
+  'categories/slider/coffee-3.jpg',
+  'categories/slider/coffee-machine-1.jpg',
+  'categories/slider/barista-1.png',
+  'categories/slider/cafe-1.jpg',
 ];
 
 const Home = () => {
