@@ -3,7 +3,7 @@ import re
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from .models import User, Category, Product, Order, Store
+from .models import User, Category, Product, Order, Store, FeedbackRequest
 
 
 def clean_text(value):
@@ -214,3 +214,64 @@ class StoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
         fields = '__all__'
+
+
+class FeedbackRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeedbackRequest
+        fields = '__all__'
+        read_only_fields = (
+            'id',
+            'status',
+            'created_at',
+        )
+
+    def validate_name(self, value):
+        value = clean_text(value)
+
+        if len(value) < 2:
+            raise serializers.ValidationError('Имя слишком короткое')
+
+        if len(value) > 100:
+            raise serializers.ValidationError('Имя слишком длинное')
+
+        return value
+
+    def validate_subject(self, value):
+        value = clean_text(value)
+
+        if len(value) < 3:
+            raise serializers.ValidationError('Тема обращения слишком короткая')
+
+        if len(value) > 200:
+            raise serializers.ValidationError('Тема обращения слишком длинная')
+
+        return value
+
+    def validate_message(self, value):
+        value = clean_text(value)
+
+        if len(value) < 10:
+            raise serializers.ValidationError('Сообщение должно быть не короче 10 символов')
+
+        if len(value) > 1000:
+            raise serializers.ValidationError('Сообщение слишком длинное')
+
+        return value
+
+    def validate(self, attrs):
+        phone = attrs.get('phone', '').strip()
+        email = attrs.get('email', '').strip()
+
+        if not phone and not email:
+            raise serializers.ValidationError(
+                'Укажите телефон или email для обратной связи'
+            )
+
+        if phone:
+            attrs['phone'] = validate_phone_value(phone)
+
+        if email:
+            attrs['email'] = email.lower()
+
+        return attrs

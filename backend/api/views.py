@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Category, Product, Order, Store
+from .models import Category, Product, Order, Store, FeedbackRequest
 from .serializers import (
     UserSerializer,
     RegisterSerializer,
@@ -18,6 +18,7 @@ from .serializers import (
     ProductSerializer,
     OrderSerializer,
     StoreSerializer,
+    FeedbackRequestSerializer,
 )
 
 
@@ -140,3 +141,15 @@ class OrderListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
+
+
+class FeedbackCreateView(generics.CreateAPIView):
+    queryset = FeedbackRequest.objects.all()
+    serializer_class = FeedbackRequestSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class FeedbackListView(generics.ListAPIView):
+    queryset = FeedbackRequest.objects.all()
+    serializer_class = FeedbackRequestSerializer
+    permission_classes = [permissions.IsAdminUser]

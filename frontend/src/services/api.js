@@ -32,6 +32,9 @@ class ApiService {
       password2: 'Подтверждение пароля',
       default_payment: 'Способ оплаты',
       default_delivery: 'Способ доставки',
+      preferred_contact: 'Способ связи',
+      subject: 'Тема',
+      message: 'Сообщение',
       non_field_errors: 'Ошибка',
     };
 
@@ -136,6 +139,13 @@ class ApiService {
     return this.request('/orders/create/', {
       method: 'POST',
       body: JSON.stringify(orderData),
+    });
+  }
+
+  createFeedback(feedbackData) {
+    return this.request('/feedback/', {
+      method: 'POST',
+      body: JSON.stringify(feedbackData),
     });
   }
 
