@@ -248,16 +248,16 @@ class FeedbackRequestSerializer(serializers.ModelSerializer):
 
         return value
 
-    def validate_message(self, value):
-        value = clean_text(value)
+def validate_message(self, value):
+    value = clean_text(value)
 
-        if len(value) < 10:
-            raise serializers.ValidationError('Сообщение должно быть не короче 10 символов')
+    if len(value) < 2:
+        raise serializers.ValidationError('Сообщение слишком короткое')
 
-        if len(value) > 1000:
-            raise serializers.ValidationError('Сообщение слишком длинное')
+    if len(value) > 1000:
+        raise serializers.ValidationError('Сообщение слишком длинное')
 
-        return value
+    return value
 
     def validate(self, attrs):
         phone = attrs.get('phone', '').strip()
