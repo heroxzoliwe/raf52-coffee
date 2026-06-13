@@ -8,6 +8,7 @@ const navItems = [
   { path: '/tempers', name: 'Темперы' },
   { path: '/scales', name: 'Весы' },
   { path: '/accessories', name: 'Аксессуары' },
+  { path: '/coffee-machines', name: 'Кофе машины' },
 ];
 
 const Header = () => {

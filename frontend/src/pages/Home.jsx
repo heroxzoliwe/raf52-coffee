@@ -2,6 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
+const heroSlides = [
+  'categories/slider/coffee-1.jpg',
+  'categories/slider/coffee-2.jpg',
+  'categories/slider/coffee-3.jpg',
+  'categories/slider/coffee-machine-1.jpg',
+  'categories/slider/barista-1.png',
+  'categories/slider/cafe-1.jpg',
+];
+
 const Home = () => {
   const categories = [
     {
@@ -32,26 +41,73 @@ const Home = () => {
       description: 'Корзинки и аксессуары',
       count: '3 модели',
     },
+    {
+      name: 'Кофе машины',
+      path: '/coffee-machines',
+      image: 'categories/coffee-machines/coffee-machine-classic-pro.jpg',
+      description: 'Профессиональные кофемашины для кофейни',
+      count: '6 моделей',
+    },
   ];
+
+  const sliderImages = [...heroSlides, ...heroSlides];
 
   return (
     <div className="min-h-screen">
       <section className="min-h-screen relative flex items-center justify-center bg-grid-pattern overflow-hidden pt-20">
-        <div className="absolute inset-0 animated-gradient" />
-        <div className="absolute inset-0 bg-dot-pattern" />
+        <div className="hero-background-slider" aria-hidden="true">
+          <div className="hero-slider-row hero-slider-row--top">
+            {sliderImages.map((image, index) => (
+              <div className="hero-slide-card" key={`top-${image}-${index}`}>
+                <img
+                  src={`/images/${image}`}
+                  alt=""
+                  loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.src = '/images/categories/placeholder.jpg';
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="hero-slider-row hero-slider-row--bottom">
+            {sliderImages.map((image, index) => (
+              <div
+                className="hero-slide-card hero-slide-card--small"
+                key={`bottom-${image}-${index}`}
+              >
+                <img
+                  src={`/images/${image}`}
+                  alt=""
+                  loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.src = '/images/categories/placeholder.jpg';
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+<div className="absolute inset-0 bg-white/45 backdrop-blur-[0.5px] z-[1]" />
+<div className="absolute inset-0 animated-gradient opacity-40 z-[2]" />
+<div className="absolute inset-0 bg-dot-pattern opacity-70 z-[3]" />
 
         <div className="container mx-auto px-4 relative z-10 text-center">
           <div className="max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md rounded-full px-4 sm:px-6 py-3 shadow-xl mb-8 border border-gray-200">
+            <div className="inline-flex items-center gap-2 bg-white/85 backdrop-blur-md rounded-full px-4 sm:px-6 py-3 shadow-xl mb-8 border border-gray-200">
               <span className="w-2 h-2 bg-black rounded-full" />
+
               <span className="text-xs sm:text-sm font-semibold text-gray-700">
                 ПРОФЕССИОНАЛЬНОЕ КОФЕЙНОЕ ОБОРУДОВАНИЕ
               </span>
+
               <span className="w-2 h-2 bg-black rounded-full" />
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black mb-8 tracking-tight">
               <span className="text-gray-900">RAF-52</span>
+
               <span className="bg-gradient-to-r from-gray-900 to-black bg-clip-text text-transparent block">
                 COFFEE
               </span>
@@ -62,9 +118,10 @@ const Home = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/pitchers" className="btn-primary w-full sm:w-auto">
+              <Link to="/coffee-machines" className="btn-primary w-full sm:w-auto">
                 Смотреть каталог
               </Link>
+
               <Link to="/buy" className="btn-secondary w-full sm:w-auto">
                 Где купить
               </Link>
@@ -95,6 +152,11 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: index * 0.05 }}
+                className={
+                  categories.length % 2 === 1 && index === categories.length - 1
+                    ? 'lg:col-span-2'
+                    : ''
+                }
               >
                 <Link
                   to={category.path}
@@ -107,7 +169,7 @@ const Home = () => {
                       loading="lazy"
                       className="w-full h-full object-contain bg-white p-5 sm:p-8 group-hover:scale-105 transition duration-500"
                       onError={(e) => {
-                        e.currentTarget.src = 'https://placehold.co/600x400?text=NO+IMAGE';
+                        e.currentTarget.src = '/images/categories/placeholder.jpg';
                       }}
                     />
 

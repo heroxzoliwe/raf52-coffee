@@ -87,3 +87,100 @@ body {
 main {
   padding-top: 80px;
 }
+/* Бегущий фоновый слайдер на главной */
+.hero-background-slider {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-slider-row {
+  position: absolute;
+  display: flex;
+  width: max-content;
+  gap: 28px;
+  animation: heroSliderMove 42s linear infinite;
+}
+
+.hero-slider-row--top {
+  top: 9%;
+  left: -12%;
+}
+
+.hero-slider-row--bottom {
+  bottom: 8%;
+  left: -24%;
+  animation-duration: 54s;
+  animation-direction: reverse;
+}
+
+.hero-slide-card {
+  width: 280px;
+  height: 190px;
+  flex: 0 0 auto;
+  border-radius: 30px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  box-shadow: 0 32px 80px rgba(15, 23, 42, 0.22);
+  transform: rotate(-4deg);
+}
+
+.hero-slide-card--small {
+  width: 235px;
+  height: 165px;
+  transform: rotate(5deg);
+}
+
+.hero-slide-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 22px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(243, 244, 246, 0.9)
+  );
+}
+
+@keyframes heroSliderMove {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-slider-row {
+    gap: 16px;
+  }
+
+  .hero-slider-row--top {
+    top: 7%;
+  }
+
+  .hero-slider-row--bottom {
+    bottom: 6%;
+  }
+
+  .hero-slide-card {
+    width: 190px;
+    height: 135px;
+    border-radius: 22px;
+  }
+
+  .hero-slide-card--small {
+    width: 165px;
+    height: 118px;
+  }
+
+  .hero-slide-card img {
+    padding: 14px;
+  }
+}

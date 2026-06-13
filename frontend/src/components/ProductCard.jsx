@@ -51,6 +51,15 @@ const imageMapByIndex = {
     'basket-double-58mm',
     'basket-precision-58mm',
   ],
+
+  'coffee-machines': [
+    'coffee-machine-classic-pro',
+    'coffee-machine-duo-barista',
+    'coffee-machine-compact-one',
+    'coffee-machine-premium-touch',
+    'coffee-machine-automatic-milk',
+    'coffee-machine-commercial-elite',
+  ],
 };
 
 const ProductCard = ({ product, index = 0, category }) => {
@@ -64,7 +73,11 @@ const ProductCard = ({ product, index = 0, category }) => {
     product.slug ||
     product.id;
 
-  const imageSrc = `/images/categories/${category}/${fileName}.jpg`;
+  const imageSrc = product.image?.startsWith('http')
+    ? product.image
+    : product.image?.startsWith('/media')
+      ? product.image
+      : `/images/categories/${category}/${fileName}.jpg`;
 
   const handleViewClick = () => {
     navigate(`/product/${category}/${product.id}`, {
@@ -116,7 +129,7 @@ const ProductCard = ({ product, index = 0, category }) => {
             className="w-full h-full object-contain p-4 sm:p-5"
             onError={(e) => {
               e.currentTarget.src =
-                'https://placehold.co/400x400?text=NO+IMAGE';
+                '/images/categories/placeholder.jpg';
             }}
           />
         </div>

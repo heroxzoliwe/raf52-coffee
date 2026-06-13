@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import api from '../services/api';
+import { productsData } from '../data/Products';
 
 const categoryContent = {
   pitchers: {
@@ -31,6 +32,13 @@ const categoryContent = {
     description:
       'Профессиональные аксессуары для бариста',
   },
+
+  'coffee-machines': {
+    badge: 'КОЛЛЕКЦИЯ КОФЕ МАШИН',
+    title: 'Кофе машины',
+    description:
+      'Профессиональные кофемашины для стабильной экстракции и быстрой работы кофейни',
+  },
 };
 
 const CategoryPage = () => {
@@ -46,11 +54,13 @@ const CategoryPage = () => {
       try {
         setLoading(true);
 
+        const fallbackProducts = productsData[category] || [];
         const data = await api.getProducts(category);
 
-        setProducts(data);
+        setProducts(data?.length ? data : fallbackProducts);
       } catch (error) {
         console.error(error);
+        setProducts(productsData[category] || []);
       } finally {
         setLoading(false);
       }
@@ -72,9 +82,7 @@ const CategoryPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-24 sm:pt-32 pb-12 sm:pb-20">
       <div className="container mx-auto px-4">
-
         <div className="text-center mb-10 sm:mb-14 lg:mb-20">
-
           <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-md rounded-2xl px-4 sm:px-6 py-3 shadow-lg mb-5 sm:mb-6 border border-gray-200">
             <span className="w-2 h-2 bg-black rounded-full" />
 
@@ -106,7 +114,7 @@ const CategoryPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
             {products.map((product, index) => (
               <ProductCard
-                key={product.id}
+                key={`${category}-${product.id}`}
                 product={product}
                 index={index}
                 category={category}
