@@ -1,6 +1,4 @@
-const API_URL =
-  process.env.REACT_APP_API_URL ||
-  'https://raf52-coffee-production.up.railway.app/api';
+const API_URL = 'https://raf52-coffee-production.up.railway.app/api';
 
 class ApiService {
   constructor() {
