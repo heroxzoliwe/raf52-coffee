@@ -3,6 +3,29 @@ import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { productsData } from '../data/Products';
+
+const SITE_URL =
+  process.env.REACT_APP_SITE_URL || 'https://raf52-coffee.up.railway.app';
+
+const API_BASE_URL = (
+  process.env.REACT_APP_API_URL ||
+  'http://127.0.0.1:8000/api'
+).replace('/api', '');
+
+const getAbsoluteUrl = (url) => {
+  if (!url) return SITE_URL;
+
+  if (url.startsWith('http')) {
+    return url;
+  }
+
+  if (url.startsWith('/media')) {
+    return `${API_BASE_URL}${url}`;
+  }
+
+  return `${SITE_URL}${url.startsWith('/') ? url : `/${url}`}`;
+};
 
 const ProductPage = () => {
   const { category, slug } = useParams();
@@ -26,21 +49,48 @@ const ProductPage = () => {
       return;
     }
 
+    const getFallbackProduct = () => {
+      return productsData[category]?.find((item) => {
+        return String(item.id) === String(slug) || item.slug === slug;
+      });
+    };
+
+    const getImageSrc = (item) => {
+      if (!item) return '';
+
+      if (item.image?.startsWith('http')) {
+        return item.image;
+      }
+
+      if (item.image?.startsWith('/media')) {
+        return `${API_BASE_URL}${item.image}`;
+      }
+
+      return item.image
+        ? `/images/${item.image}`
+        : `/images/categories/${category}/${item.slug || item.id}.jpg`;
+    };
+
     const loadProduct = async () => {
       try {
         setLoading(true);
 
         const data = await api.getProduct(category, slug);
+        const fallbackProduct = getFallbackProduct();
+        const productData = data || fallbackProduct;
 
-        setProduct(data);
+        setProduct(productData);
 
         setImageSrc(
-          data.image ||
-          `/images/categories/${category}/${data.slug || data.id}.jpg`
+          getImageSrc(productData) ||
+            `/images/categories/${category}/${productData?.slug || productData?.id}.jpg`
         );
       } catch (error) {
         console.error(error);
-        setProduct(null);
+
+        const fallbackProduct = getFallbackProduct();
+        setProduct(fallbackProduct || null);
+        setImageSrc(getImageSrc(fallbackProduct));
       } finally {
         setLoading(false);
       }
@@ -48,6 +98,55 @@ const ProductPage = () => {
 
     loadProduct();
   }, [category, slug, location.state]);
+
+  useEffect(() => {
+    if (!product) return;
+
+    const productTitle = `${product.name} — купить в RAF-52 Coffee`;
+
+    const productDescription = `${product.description} Цена: ${product.price} ₽. Профессиональное кофейное оборудование для бариста и кофеен.`;
+
+    const canonicalUrl = `${SITE_URL}/product/${category}/${product.slug || product.id}`;
+
+    document.title = productTitle;
+
+    let metaDescription = document.querySelector('meta[name="description"]');
+
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.name = 'description';
+      document.head.appendChild(metaDescription);
+    }
+
+    metaDescription.setAttribute('content', productDescription);
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+
+    canonical.setAttribute('href', canonicalUrl);
+
+    const setMetaProperty = (property, value) => {
+      let tag = document.querySelector(`meta[property="${property}"]`);
+
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute('property', property);
+        document.head.appendChild(tag);
+      }
+
+      tag.setAttribute('content', value);
+    };
+
+    setMetaProperty('og:title', productTitle);
+    setMetaProperty('og:description', productDescription);
+    setMetaProperty('og:url', canonicalUrl);
+    setMetaProperty('og:image', getAbsoluteUrl(imageSrc));
+  }, [product, imageSrc, category]);
 
   const handleAddToCart = (redirect = false) => {
     if (!isAuthenticated) {
@@ -98,10 +197,34 @@ const ProductPage = () => {
     );
   }
 
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: [getAbsoluteUrl(imageSrc)],
+    brand: {
+      '@type': 'Brand',
+      name: 'RAF-52 Coffee',
+    },
+    category: product.category_name || category,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'RUB',
+      price: String(product.price),
+      availability: 'https://schema.org/InStock',
+      url: `${SITE_URL}/product/${category}/${product.slug || product.id}`,
+    },
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pt-24 sm:pt-32 pb-12 sm:pb-20">
-      <div className="container mx-auto px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
 
+      <div className="container mx-auto px-4">
         <div className="text-sm text-gray-500 mb-6 break-words">
           <Link to="/" className="hover:text-black">
             Главная
@@ -121,11 +244,10 @@ const ProductPage = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-lg flex items-center justify-center min-h-[320px] sm:min-h-[500px]">
             <img
               src={imageSrc}
-              alt={product.name}
+              alt={`${product.name} — профессиональное кофейное оборудование RAF-52 Coffee`}
               loading="lazy"
               className="w-full h-full object-contain max-h-[500px]"
               onError={(e) => {
@@ -136,13 +258,11 @@ const ProductPage = () => {
           </div>
 
           <div>
-
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 break-words">
               {product.name}
             </h1>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mb-6">
-
               <span className="text-3xl sm:text-4xl font-black text-black">
                 ₽{product.price}
               </span>
@@ -164,9 +284,9 @@ const ProductPage = () => {
 
             {product.characteristics?.length > 0 && (
               <div className="mb-6">
-                <h3 className="font-bold text-lg mb-3">
+                <h2 className="font-bold text-lg mb-3">
                   Характеристики
-                </h3>
+                </h2>
 
                 <ul className="space-y-2 text-gray-600">
                   {product.characteristics.map((item, index) => (
@@ -183,9 +303,9 @@ const ProductPage = () => {
 
             {product.features?.length > 0 && (
               <div className="mb-6">
-                <h3 className="font-bold text-lg mb-3">
+                <h2 className="font-bold text-lg mb-3">
                   Особенности
-                </h3>
+                </h2>
 
                 <ul className="space-y-2 text-gray-600">
                   {product.features.map((item, index) => (
@@ -201,13 +321,11 @@ const ProductPage = () => {
             )}
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
-
               <span className="font-semibold">
                 Количество:
               </span>
 
               <div className="flex items-center gap-3">
-
                 <button
                   onClick={() =>
                     setQuantity(Math.max(1, quantity - 1))
@@ -233,7 +351,6 @@ const ProductPage = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-
               <button
                 onClick={() => handleAddToCart(true)}
                 className="flex-1 bg-black text-white py-4 rounded-xl font-semibold hover:bg-gray-800 transition"
@@ -247,9 +364,7 @@ const ProductPage = () => {
               >
                 В корзину
               </button>
-
             </div>
-
           </div>
         </div>
       </div>

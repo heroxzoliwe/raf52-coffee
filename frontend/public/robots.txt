@@ -1,3 +1,4 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+Sitemap: https://raf52-coffee.up.railway.app/sitemap.xml

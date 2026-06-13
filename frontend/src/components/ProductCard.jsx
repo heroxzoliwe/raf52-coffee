@@ -73,11 +73,18 @@ const ProductCard = ({ product, index = 0, category }) => {
     product.slug ||
     product.id;
 
+  const API_BASE_URL = (
+    process.env.REACT_APP_API_URL ||
+    'http://127.0.0.1:8000/api'
+  ).replace('/api', '');
+
   const imageSrc = product.image?.startsWith('http')
     ? product.image
     : product.image?.startsWith('/media')
-      ? product.image
-      : `/images/categories/${category}/${fileName}.jpg`;
+      ? `${API_BASE_URL}${product.image}`
+      : product.image
+        ? `/images/${product.image}`
+        : `/images/categories/${category}/${fileName}.jpg`;
 
   const handleViewClick = () => {
     navigate(`/product/${category}/${product.id}`, {
@@ -124,7 +131,7 @@ const ProductCard = ({ product, index = 0, category }) => {
         <div className="h-64 sm:h-72 lg:h-80 bg-white flex items-center justify-center overflow-hidden">
           <img
             src={imageSrc}
-            alt={product.name}
+            alt={`${product.name} — профессиональное кофейное оборудование RAF-52 Coffee`}
             loading="lazy"
             className="w-full h-full object-contain p-4 sm:p-5"
             onError={(e) => {

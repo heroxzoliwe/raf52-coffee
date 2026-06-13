@@ -50,6 +50,55 @@ const CategoryPage = () => {
   const content = categoryContent[category];
 
   useEffect(() => {
+    if (!content) return;
+
+    const siteUrl =
+      process.env.REACT_APP_SITE_URL || 'https://raf52-coffee.up.railway.app';
+
+    const canonicalUrl = `${siteUrl}/${category}`;
+
+    const description = `${content.description}. RAF-52 Coffee — профессиональное кофейное оборудование для бариста и кофеен.`;
+
+    document.title = `${content.title} — RAF-52 Coffee`;
+
+    let metaDescription = document.querySelector('meta[name="description"]');
+
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.name = 'description';
+      document.head.appendChild(metaDescription);
+    }
+
+    metaDescription.setAttribute('content', description);
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+
+    canonical.setAttribute('href', canonicalUrl);
+
+    const setMetaProperty = (property, value) => {
+      let tag = document.querySelector(`meta[property="${property}"]`);
+
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute('property', property);
+        document.head.appendChild(tag);
+      }
+
+      tag.setAttribute('content', value);
+    };
+
+    setMetaProperty('og:title', `${content.title} — RAF-52 Coffee`);
+    setMetaProperty('og:description', description);
+    setMetaProperty('og:url', canonicalUrl);
+  }, [category, content]);
+
+  useEffect(() => {
     const loadProducts = async () => {
       try {
         setLoading(true);
