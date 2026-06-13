@@ -57,6 +57,12 @@ const Feedback = () => {
     }
   };
 
+  const infoItems = [
+    'сохранение в базу данных',
+    'отображение отправленных данных',
+    'просмотр заявок в админке',
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 pt-24 sm:pt-32 pb-12 sm:pb-20">
       <div className="container mx-auto px-4">
@@ -216,8 +222,12 @@ const Feedback = () => {
           >
             {!savedData ? (
               <div className="h-full flex flex-col justify-center">
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-                  <span className="text-3xl">☕</span>
+                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 border border-white/10">
+                  <img
+                    src="/images/icons/free-icon-consultancy-6019903.png"
+                    alt="Консультация"
+                    className="w-9 h-9 object-contain brightness-0 invert"
+                  />
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl font-black mb-4">
@@ -225,27 +235,40 @@ const Feedback = () => {
                 </h2>
 
                 <p className="text-gray-300 leading-relaxed mb-6">
-                  После отправки форма создаёт заявку в базе данных. Администратор может открыть её в Django admin, изменить статус и обработать обращение клиента.
+                  После отправки форма создаёт заявку в базе данных.
+                  Администратор может открыть её в Django admin, изменить статус
+                  и обработать обращение клиента.
                 </p>
 
                 <div className="space-y-3">
-                  <div className="bg-white/10 rounded-xl p-4">
-                    ✅ сохранение в базу данных
-                  </div>
+                  {infoItems.map((item) => (
+                    <div
+                      key={item}
+                      className="bg-white/10 rounded-xl p-4 flex items-center gap-3 border border-white/10"
+                    >
+                      <span className="w-7 h-7 rounded-lg bg-white flex items-center justify-center shrink-0">
+                        <img
+                          src="/images/icons/free-icon-checkmark-16703458.png"
+                          alt="Выполнено"
+                          className="w-4 h-4 object-contain"
+                        />
+                      </span>
 
-                  <div className="bg-white/10 rounded-xl p-4">
-                    ✅ отображение отправленных данных
-                  </div>
-
-                  <div className="bg-white/10 rounded-xl p-4">
-                    ✅ просмотр заявок в админке
-                  </div>
+                      <span className="font-semibold">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             ) : (
               <div>
-                <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center mb-6">
-                  <span className="text-3xl">✓</span>
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6">
+                  <img
+                    src="/images/icons/free-icon-checkmark-16703458.png"
+                    alt="Заявка сохранена"
+                    className="w-9 h-9 object-contain"
+                  />
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl font-black mb-4">
@@ -257,32 +280,36 @@ const Feedback = () => {
                 </p>
 
                 <div className="space-y-3 text-sm sm:text-base">
-                  <div className="bg-white/10 rounded-xl p-4">
+                  <div className="bg-white/10 rounded-xl p-4 border border-white/10">
                     <span className="text-gray-400">Номер заявки:</span>
                     <div className="font-semibold">#{savedData.id}</div>
                   </div>
 
-                  <div className="bg-white/10 rounded-xl p-4">
+                  <div className="bg-white/10 rounded-xl p-4 border border-white/10">
                     <span className="text-gray-400">Имя:</span>
                     <div className="font-semibold">{savedData.name}</div>
                   </div>
 
-                  <div className="bg-white/10 rounded-xl p-4">
+                  <div className="bg-white/10 rounded-xl p-4 border border-white/10">
                     <span className="text-gray-400">Телефон:</span>
-                    <div className="font-semibold">{savedData.phone || 'Не указан'}</div>
+                    <div className="font-semibold">
+                      {savedData.phone || 'Не указан'}
+                    </div>
                   </div>
 
-                  <div className="bg-white/10 rounded-xl p-4">
+                  <div className="bg-white/10 rounded-xl p-4 border border-white/10">
                     <span className="text-gray-400">Email:</span>
-                    <div className="font-semibold">{savedData.email || 'Не указан'}</div>
+                    <div className="font-semibold">
+                      {savedData.email || 'Не указан'}
+                    </div>
                   </div>
 
-                  <div className="bg-white/10 rounded-xl p-4">
+                  <div className="bg-white/10 rounded-xl p-4 border border-white/10">
                     <span className="text-gray-400">Тема:</span>
                     <div className="font-semibold">{savedData.subject}</div>
                   </div>
 
-                  <div className="bg-white/10 rounded-xl p-4">
+                  <div className="bg-white/10 rounded-xl p-4 border border-white/10">
                     <span className="text-gray-400">Сообщение:</span>
                     <div className="font-semibold">{savedData.message}</div>
                   </div>
