@@ -174,9 +174,9 @@ const Home = () => {
                         alt={category.name}
                         loading="lazy"
                         className={`w-full h-full transition duration-500 ${
-                          isCoffeeMachines
-                            ? 'object-contain bg-white p-8 sm:p-12 lg:p-16 group-hover:scale-[1.02]'
-                            : 'object-contain bg-white p-5 sm:p-8 group-hover:scale-105'
+isCoffeeMachines
+  ? 'object-contain bg-white p-2 sm:p-4 lg:p-6 group-hover:scale-[1.04]'
+  : 'object-contain bg-white p-5 sm:p-8 group-hover:scale-105'
                         }`}
                         onError={(e) => {
                           e.currentTarget.src = '/images/categories/placeholder.jpg';
