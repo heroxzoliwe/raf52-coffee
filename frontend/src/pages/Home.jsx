@@ -2,14 +2,24 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-const heroSlides = [
-  'categories/slider/coffee-1.jpg',
-  'categories/slider/coffee-2.jpg',
-  'categories/slider/coffee-3.jpg',
-  'categories/slider/coffee-machine-1.jpg',
-  'categories/slider/barista-1.png',
-  'categories/slider/cafe-1.jpg',
+const gravityImages = [
+  {
+    image: 'categories/pitchers/pitcher-professional-350ml.jpg',
+    alt: 'Профессиональный питчер для бариста RAF-52 Coffee',
+    className: 'hero-gravity-item hero-gravity-item--pitcher',
+  },
+  {
+    image: 'categories/tempers/temper-classic.jpg',
+    alt: 'Профессиональный темпер для кофе RAF-52 Coffee',
+    className: 'hero-gravity-item hero-gravity-item--temper',
+  },
+  {
+    image: 'categories/scales/scales-coffee-precision.jpg',
+    alt: 'Точные кофейные весы RAF-52 Coffee',
+    className: 'hero-gravity-item hero-gravity-item--scales',
+  },
 ];
+
 const categories = [
   {
     name: 'Питчеры',
@@ -54,61 +64,30 @@ const categories = [
 ];
 
 const Home = () => {
-  const sliderImages = [...heroSlides, ...heroSlides];
-
   return (
     <div className="min-h-screen">
       <section className="min-h-screen relative flex items-center justify-center bg-grid-pattern overflow-hidden pt-20">
-        <div className="hero-background-slider" aria-hidden="true">
-          <div className="hero-slider-row hero-slider-row--top">
-            {sliderImages.map((image, index) => {
-              const isPriority = index < 2;
-
-              return (
-                <div
-                  className="hero-slide-card"
-                  key={`top-${image}-${index}`}
-                >
-                  <img
-                    src={`/images/${image}`}
-                    alt=""
-                    width="420"
-                    height="260"
-                    loading={isPriority ? 'eager' : 'lazy'}
-                    fetchPriority={isPriority ? 'high' : 'auto'}
-                    decoding="async"
-                  />
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="hero-slider-row hero-slider-row--bottom">
-            {sliderImages.map((image, index) => {
-              const isPriority = index < 1;
-
-              return (
-                <div
-                  className="hero-slide-card hero-slide-card--small"
-                  key={`bottom-${image}-${index}`}
-                >
-                  <img
-                    src={`/images/${image}`}
-                    alt=""
-                    width="320"
-                    height="200"
-                    loading={isPriority ? 'eager' : 'lazy'}
-                    fetchPriority={isPriority ? 'high' : 'auto'}
-                    decoding="async"
-                  />
-                </div>
-              );
-            })}
-          </div>
+        <div className="hero-gravity-layer">
+          {gravityImages.map((item, index) => (
+            <div
+              key={item.image}
+              className={item.className}
+            >
+              <img
+                src={`/images/${item.image}`}
+                alt={item.alt}
+                width="360"
+                height="260"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
+                decoding="async"
+              />
+            </div>
+          ))}
         </div>
 
-        <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] z-[1]" />
-        <div className="absolute inset-0 animated-gradient opacity-70 z-[2]" />
+        <div className="absolute inset-0 bg-white/72 backdrop-blur-[1px] z-[1]" />
+        <div className="absolute inset-0 animated-gradient opacity-60 z-[2]" />
         <div className="absolute inset-0 bg-dot-pattern z-[3]" />
 
         <div className="container mx-auto px-4 relative z-10 text-center">
