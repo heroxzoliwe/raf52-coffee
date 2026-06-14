@@ -110,9 +110,8 @@ const Feedback = () => {
   } catch (err) {
     console.error(err);
 
-    setError(
-      'Не удалось отправить письмо. Проверьте EmailJS Service ID, Template ID и Public Key.'
-    );
+setError(err.message || 'Не удалось отправить письмо через EmailJS');
+
   } finally {
     setIsLoading(false);
   }

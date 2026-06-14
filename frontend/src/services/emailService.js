@@ -1,13 +1,13 @@
 import emailjs from '@emailjs/browser';
 
-const EMAILJS_SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+const EMAILJS_SERVICE_ID = 'service_4ktseps';
+const EMAILJS_TEMPLATE_ID = 'template_lu8rmm7';
+const EMAILJS_PUBLIC_KEY = 'GZcQyE8SKM0QaFOea';
 
 export const sendFeedbackEmail = async (feedbackData) => {
   if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
     throw new Error(
-      'EmailJS не настроен. Проверь REACT_APP_EMAILJS_SERVICE_ID, REACT_APP_EMAILJS_TEMPLATE_ID и REACT_APP_EMAILJS_PUBLIC_KEY'
+      'EmailJS не настроен: проверь Service ID, Template ID и Public Key'
     );
   }
 
@@ -23,12 +23,22 @@ export const sendFeedbackEmail = async (feedbackData) => {
     site_name: 'RAF-52 Coffee',
   };
 
-  return emailjs.send(
-    EMAILJS_SERVICE_ID,
-    EMAILJS_TEMPLATE_ID,
-    templateParams,
-    {
-      publicKey: EMAILJS_PUBLIC_KEY,
-    }
-  );
+  try {
+    return await emailjs.send(
+      EMAILJS_SERVICE_ID,
+      EMAILJS_TEMPLATE_ID,
+      templateParams,
+      {
+        publicKey: EMAILJS_PUBLIC_KEY,
+      }
+    );
+  } catch (error) {
+    console.error('EMAILJS ERROR:', error);
+
+    throw new Error(
+      error?.text ||
+      error?.message ||
+      'EmailJS не смог отправить письмо'
+    );
+  }
 };
