@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import Notification from './components/Notification';
 import ProtectedRoute from './components/ProtectedRoute';
 import InteractiveEffects from './components/InteractiveEffects';
+import SEOManager from './components/SEOManager';
 
 import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
@@ -19,6 +20,7 @@ import Orders from './pages/Orders';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Feedback from './pages/Feedback';
+import NotFound from './pages/NotFound';
 
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider, useCart } from './context/CartContext';
@@ -40,11 +42,18 @@ const NotificationWrapper = () => {
 const AppContent = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      <SEOManager />
       <Header />
 
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
+
+          <Route path="/pitchers" element={<CategoryPage />} />
+          <Route path="/tempers" element={<CategoryPage />} />
+          <Route path="/scales" element={<CategoryPage />} />
+          <Route path="/accessories" element={<CategoryPage />} />
+          <Route path="/coffee-machines" element={<CategoryPage />} />
 
           <Route path="/buy" element={<Buy />} />
           <Route path="/privacy" element={<Privacy />} />
@@ -91,7 +100,7 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          <Route path="/:category" element={<CategoryPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 

@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
+Disallow: /cart
+Disallow: /checkout
+Disallow: /login
+Disallow: /register
+Disallow: /profile
+Disallow: /orders
+Disallow: /admin
+Disallow: /reset-password
+Disallow: /forgot-password
+
+Host: https://raf52-coffee.up.railway.app
 Sitemap: https://raf52-coffee.up.railway.app/sitemap.xml
