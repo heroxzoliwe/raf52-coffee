@@ -41,8 +41,9 @@ const categoryContent = {
   },
 };
 
-const CategoryPage = () => {
-  const { category } = useParams();
+const CategoryPage = ({ categorySlug }) => {
+  const params = useParams();
+  const category = categorySlug || params.category;
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);

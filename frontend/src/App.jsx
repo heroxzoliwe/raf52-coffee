@@ -49,11 +49,30 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<Home />} />
 
-          <Route path="/pitchers" element={<CategoryPage />} />
-          <Route path="/tempers" element={<CategoryPage />} />
-          <Route path="/scales" element={<CategoryPage />} />
-          <Route path="/accessories" element={<CategoryPage />} />
-          <Route path="/coffee-machines" element={<CategoryPage />} />
+          <Route
+            path="/pitchers"
+            element={<CategoryPage categorySlug="pitchers" />}
+          />
+
+          <Route
+            path="/tempers"
+            element={<CategoryPage categorySlug="tempers" />}
+          />
+
+          <Route
+            path="/scales"
+            element={<CategoryPage categorySlug="scales" />}
+          />
+
+          <Route
+            path="/accessories"
+            element={<CategoryPage categorySlug="accessories" />}
+          />
+
+          <Route
+            path="/coffee-machines"
+            element={<CategoryPage categorySlug="coffee-machines" />}
+          />
 
           <Route path="/buy" element={<Buy />} />
           <Route path="/privacy" element={<Privacy />} />
