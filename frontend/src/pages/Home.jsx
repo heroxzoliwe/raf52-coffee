@@ -91,8 +91,8 @@ const Home = () => {
           ))}
         </div>
 
-<div className="absolute inset-0 bg-white/52 backdrop-blur-[0.5px] z-[1]" />
-<div className="absolute inset-0 animated-gradient opacity-40 z-[2]" />
+<div className="absolute inset-0 bg-white/35 z-[1]" />
+<div className="absolute inset-0 animated-gradient opacity-25 z-[2]" />
         <div className="absolute inset-0 bg-dot-pattern z-[3]" />
 
         <div className="container mx-auto px-4 relative z-10 text-center">

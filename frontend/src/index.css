@@ -493,3 +493,80 @@ main {
     height: 105px;
   }
 }
+/* Делаем gravity-картинки крупнее и без прозрачности */
+.hero-gravity-item {
+  opacity: 1 !important;
+  width: 300px;
+  height: 215px;
+}
+
+.hero-gravity-item--temper {
+  width: 265px;
+  height: 195px;
+}
+
+.hero-gravity-item--scales {
+  width: 285px;
+  height: 205px;
+}
+
+.hero-gravity-item--machine {
+  width: 320px;
+  height: 220px;
+}
+
+.hero-gravity-item img {
+  padding: 20px;
+}
+
+/* Адаптив для планшетов */
+@media (max-width: 1024px) {
+  .hero-gravity-item {
+    width: 230px;
+    height: 165px;
+    opacity: 1 !important;
+  }
+
+  .hero-gravity-item--temper {
+    width: 215px;
+    height: 155px;
+  }
+
+  .hero-gravity-item--scales {
+    width: 220px;
+    height: 160px;
+  }
+
+  .hero-gravity-item--machine {
+    width: 240px;
+    height: 170px;
+  }
+}
+
+/* Адаптив для телефона */
+@media (max-width: 768px) {
+  .hero-gravity-item {
+    width: 165px;
+    height: 120px;
+    opacity: 0.95 !important;
+  }
+
+  .hero-gravity-item--temper {
+    width: 155px;
+    height: 112px;
+  }
+
+  .hero-gravity-item--scales {
+    width: 160px;
+    height: 115px;
+  }
+
+  .hero-gravity-item--machine {
+    width: 170px;
+    height: 120px;
+  }
+
+  .hero-gravity-item img {
+    padding: 10px;
+  }
+}
