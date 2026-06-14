@@ -65,42 +65,58 @@ const Feedback = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    setError('');
-    setEmailStatus('');
-    setIsLoading(true);
+  setError('');
+  setEmailStatus('');
+  setIsLoading(true);
 
-    const validationError = validateForm();
+  if (formData.name.trim().length < 2) {
+    setError('Введите имя');
+    setIsLoading(false);
+    return;
+  }
 
-    if (validationError) {
-      setError(validationError);
-      setIsLoading(false);
-      return;
-    }
+  if (!formData.phone.trim() && !formData.email.trim()) {
+    setError('Укажите телефон или email');
+    setIsLoading(false);
+    return;
+  }
 
-    const feedbackData = {
-      ...formData,
-      id: Date.now(),
-      created_at: new Date().toLocaleString('ru-RU'),
-      site_name: 'RAF-52 Coffee',
-    };
+  if (formData.subject.trim().length < 2) {
+    setError('Введите тему обращения');
+    setIsLoading(false);
+    return;
+  }
 
-    try {
-      await sendFeedbackEmail(feedbackData);
+  if (formData.message.trim().length < 3) {
+    setError('Введите сообщение');
+    setIsLoading(false);
+    return;
+  }
 
-      setSavedData(feedbackData);
-      setEmailStatus('sent');
-    } catch (err) {
-      console.error(err);
-
-      setError(
-        'Не удалось отправить письмо. Проверьте EmailJS Service ID, Template ID и Public Key.'
-      );
-    } finally {
-      setIsLoading(false);
-    }
+  const feedbackData = {
+    ...formData,
+    id: Date.now(),
+    created_at: new Date().toLocaleString('ru-RU'),
+    site_name: 'RAF-52 Coffee',
   };
+
+  try {
+    await sendFeedbackEmail(feedbackData);
+
+    setSavedData(feedbackData);
+    setEmailStatus('sent');
+  } catch (err) {
+    console.error(err);
+
+    setError(
+      'Не удалось отправить письмо. Проверьте EmailJS Service ID, Template ID и Public Key.'
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const infoItems = [
     'отправка заявки на email',
