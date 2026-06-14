@@ -46,7 +46,7 @@ const categories = [
   {
     name: 'Кофе машины',
     path: '/coffee-machines',
-    image: 'categories/coffee-machines/coffee-machine-classic-pro.jpg',
+    image: 'categories/coffee-machines/coffee-machines-card.jpg',
     description: 'Профессиональные кофемашины для кофейни',
     count: '6 моделей',
     alt: 'Профессиональная кофемашина RAF-52 Coffee',
