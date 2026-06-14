@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import api from '../services/api';
+import { sendFeedbackEmail } from '../services/emailService';
 
 const Feedback = () => {
   const [formData, setFormData] = useState({
@@ -15,11 +15,13 @@ const Feedback = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [savedData, setSavedData] = useState(null);
+  const [emailStatus, setEmailStatus] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     setError('');
+    setEmailStatus('');
 
     setFormData((prev) => ({
       ...prev,
@@ -39,28 +41,71 @@ const Feedback = () => {
 
     setSavedData(null);
     setError('');
+    setEmailStatus('');
+  };
+
+  const validateForm = () => {
+    if (formData.name.trim().length < 2) {
+      return 'Введите имя';
+    }
+
+    if (!formData.phone.trim() && !formData.email.trim()) {
+      return 'Укажите телефон или email';
+    }
+
+    if (formData.subject.trim().length < 2) {
+      return 'Введите тему обращения';
+    }
+
+    if (formData.message.trim().length < 3) {
+      return 'Введите сообщение';
+    }
+
+    return '';
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError('');
+    setEmailStatus('');
     setIsLoading(true);
 
+    const validationError = validateForm();
+
+    if (validationError) {
+      setError(validationError);
+      setIsLoading(false);
+      return;
+    }
+
+    const feedbackData = {
+      ...formData,
+      id: Date.now(),
+      created_at: new Date().toLocaleString('ru-RU'),
+      site_name: 'RAF-52 Coffee',
+    };
+
     try {
-      const response = await api.createFeedback(formData);
-      setSavedData(response);
+      await sendFeedbackEmail(feedbackData);
+
+      setSavedData(feedbackData);
+      setEmailStatus('sent');
     } catch (err) {
-      setError(err.message || 'Не удалось отправить заявку');
+      console.error(err);
+
+      setError(
+        'Не удалось отправить письмо. Проверьте EmailJS Service ID, Template ID и Public Key.'
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const infoItems = [
-    'сохранение в базу данных',
+    'отправка заявки на email',
     'отображение отправленных данных',
-    'просмотр заявок в админке',
+    'уведомление администратора',
   ];
 
   return (
@@ -231,13 +276,12 @@ const Feedback = () => {
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl font-black mb-4">
-                  Данные сохраняются в системе
+                  Заявка отправляется на почту
                 </h2>
 
                 <p className="text-gray-300 leading-relaxed mb-6">
-                  После отправки форма создаёт заявку в базе данных.
-                  Администратор может открыть её в Django admin, изменить статус
-                  и обработать обращение клиента.
+                  После отправки форма передаёт данные через EmailJS.
+                  Администратор получает письмо с контактами клиента и содержанием обращения.
                 </p>
 
                 <div className="space-y-3">
@@ -266,17 +310,23 @@ const Feedback = () => {
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6">
                   <img
                     src="/images/icons/free-icon-checkmark-16703458.png"
-                    alt="Заявка сохранена"
+                    alt="Заявка отправлена"
                     className="w-9 h-9 object-contain"
                   />
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl font-black mb-4">
-                  Заявка сохранена
+                  Заявка отправлена
                 </h2>
 
+                {emailStatus === 'sent' && (
+                  <div className="mb-5 bg-green-500/15 text-green-300 border border-green-500/30 px-4 py-3 rounded-xl text-sm">
+                    Сообщение отправлено на email администратора.
+                  </div>
+                )}
+
                 <p className="text-gray-300 mb-6">
-                  Ниже показана информация, которая была занесена в систему.
+                  Ниже показана информация, которая была отправлена.
                 </p>
 
                 <div className="space-y-3 text-sm sm:text-base">
