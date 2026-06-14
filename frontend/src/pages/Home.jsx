@@ -18,6 +18,11 @@ const gravityImages = [
     alt: 'Точные кофейные весы RAF-52 Coffee',
     className: 'hero-gravity-item hero-gravity-item--scales',
   },
+  {
+    image: 'categories/coffee-machines/coffee-machine-classic-pro.jpg.png',
+    alt: 'Профессиональная кофемашина RAF-52 Coffee',
+    className: 'hero-gravity-item hero-gravity-item--machine',
+  },
 ];
 
 const categories = [
@@ -86,8 +91,8 @@ const Home = () => {
           ))}
         </div>
 
-        <div className="absolute inset-0 bg-white/72 backdrop-blur-[1px] z-[1]" />
-        <div className="absolute inset-0 animated-gradient opacity-60 z-[2]" />
+<div className="absolute inset-0 bg-white/52 backdrop-blur-[0.5px] z-[1]" />
+<div className="absolute inset-0 animated-gradient opacity-40 z-[2]" />
         <div className="absolute inset-0 bg-dot-pattern z-[3]" />
 
         <div className="container mx-auto px-4 relative z-10 text-center">

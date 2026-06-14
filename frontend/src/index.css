@@ -439,3 +439,57 @@ main {
     height: 100px;
   }
 }
+/* Четвертая gravity-картинка слева снизу */
+.hero-gravity-item--machine {
+  bottom: 13%;
+  left: 10%;
+  width: 270px;
+  height: 185px;
+  transform: rotate(5deg);
+  animation: gravityMachine 8.5s ease-in-out infinite;
+}
+
+/* Делаем gravity-картинки заметнее */
+.hero-gravity-item {
+  opacity: 0.96;
+}
+
+@keyframes gravityMachine {
+  0% {
+    transform: translateY(0) rotate(5deg);
+  }
+
+  45% {
+    transform: translateY(18px) rotate(2deg);
+  }
+
+  80% {
+    transform: translateY(-10px) rotate(7deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(5deg);
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-gravity-item--machine {
+    bottom: 10%;
+    left: 2%;
+    width: 210px;
+    height: 145px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-gravity-item {
+    opacity: 0.78;
+  }
+
+  .hero-gravity-item--machine {
+    bottom: 8%;
+    left: -8%;
+    width: 145px;
+    height: 105px;
+  }
+}
