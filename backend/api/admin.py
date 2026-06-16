@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Category, Product, Order, Store, FeedbackRequest
+from .models import User, Category, Product, Order
 
 
 @admin.register(Category)
@@ -26,48 +26,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_editable = ('status',)
 
 
-@admin.register(Store)
-class StoreAdmin(admin.ModelAdmin):
-    list_display = ('name', 'address', 'phone', 'order')
-    list_editable = ('order',)
-
-
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('email', 'username', 'phone', 'created_at')
     search_fields = ('email', 'username')
-
-
-@admin.register(FeedbackRequest)
-class FeedbackRequestAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'phone',
-        'email',
-        'subject',
-        'preferred_contact',
-        'status',
-        'created_at',
-    )
-
-    list_filter = (
-        'status',
-        'preferred_contact',
-        'created_at',
-    )
-
-    search_fields = (
-        'name',
-        'phone',
-        'email',
-        'subject',
-        'message',
-    )
-
-    list_editable = (
-        'status',
-    )
-
-    readonly_fields = (
-        'created_at',
-    )
